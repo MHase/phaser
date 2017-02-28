@@ -5,14 +5,13 @@ var game = new Phaser.Game(400, 400, Phaser.AUTO, '', {
 });
 
 function preload() {
-  // this.game.load.tilemap('MyTilemap', 'assets/map.json', null, Phaser.Tilemap.TILED_JSON);
-  //       this.game.load.image('tiles', 'assets/tileset.png');
-  this.game.load.tilemap('MyTilemap', 'assets/map/map1.json', null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image('tiles', 'assets/map/dungeon_sheet.png');
-        this.game.load.image('dude', 'assets/img/player.png');
-// game.load.spritesheet('dude', 'assets/dude1.png', 16, 24);
+ // this.game.load.tilemap('MyTilemap', 'assets/map.json', null, Phaser.Tilemap.TILED_JSON);
+ //       this.game.load.image('tiles', 'assets/tileset.png');
+ this.game.load.tilemap('MyTilemap', 'assets/map/map1.json', null, Phaser.Tilemap.TILED_JSON);
+       this.game.load.image('tiles', 'assets/map/dungeon_sheet.png');
+      //  this.game.load.image('dude', 'assets/img/player.png');
+      game.load.spritesheet('dude', 'assets/img/player_animate.png', 12, 12);
 }
-
 
 
 var map;
@@ -39,6 +38,11 @@ function create() {
 
           player.body.collideWorldBounds = true;
 
+          player.animations.add('right', [0, 1, 2, 3], 10, true);
+          player.animations.add('left', [3, 2, 1], 10, true);
+          player.animations.add('down', [4, 5, 6, 7], 10, true);
+          player.animations.add('up', [7, 6, 5, 4], 10, true);
+
 }
 
 
@@ -46,24 +50,39 @@ function update() {
   game.physics.arcade.collide(player, ground_layer);
   cursors = game.input.keyboard.createCursorKeys();
 
+  // console.log(player.body.velocity);
+
   player.body.velocity.x = 0;
   player.body.velocity.y = 0;
 
-  if (cursors.left.isDown) {
+  //MOVEMENT
+  //movement RIGHT and LEFT
+  if (cursors.left.isDown)
       player.body.velocity.x = -150;
-      // player.animations.play('left');
-  } else if (cursors.right.isDown) {
+  else if (cursors.right.isDown)
       player.body.velocity.x = 150;
-      // player.animations.play('right');
-  } else {
-      // player.animations.stop();
-      // player.frame = 4;
-  }
-
-  if (cursors.up.isDown) {
+  //movement UP and DOWN
+  if (cursors.up.isDown)
     player.body.velocity.y = -150;
-  } else if (cursors.down.isDown) {
+  else if (cursors.down.isDown)
     player.body.velocity.y = 150;
-  }
 
-}
+
+  //ANIMATION
+
+  if(player.body.velocity.x == 0 && player.body.velocity.y == 0){
+      player.animations.stop();
+      player.frame = 0;
+    }
+  if(player.body.velocity.x > 0 && (player.body.velocity.y >= 0 || player.body.velocity.y < 0))
+    player.animations.play('right');
+  if(player.body.velocity.x < 0 && (player.body.velocity.y >= 0 || player.body.velocity.y < 0))
+    player.animations.play('left');
+  if(player.body.velocity.x == 0 && player.body.velocity.y > 0)
+    player.animations.play('down');
+  if(player.body.velocity.x == 0 && player.body.velocity.y < 0)
+    player.animations.play('up');
+
+
+
+  }
